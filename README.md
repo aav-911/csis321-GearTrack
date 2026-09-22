@@ -9,10 +9,10 @@ The MPS workers are currently struggling with tracking down equipment because th
 The repository will be organized in three folders:
 
 ### docs/
-A folder with .txt files that will explain what each programming file does, how they communicate with each other, and their purpose
+A folder with .txt files that will explain what each programming file does, how they communicate with each other, and their purpose.
 
 ### src/
-A folder with the actual programming files
+A folder with the actual programming files.
 
 ### test/ 
-A folder with testing builds
+A folder with testing builds.
