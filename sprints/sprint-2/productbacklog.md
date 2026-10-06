@@ -7,14 +7,12 @@
 | GT05 | As an MPS Student Worker, I need to submit a report in case certain equipment stops working so that my supervisor can see what needs to be fixed. | Medium | 3 | GT01, GT02 |
 
 ### Breakdown
-We determined the story points based on a few metrics, including projected difficulty, time
-commitment, logical progression, and, of course, dependencies' interaction. We assumed the person with the skills most
-suitable for each issue would be assigned to it. Since our prior experience is limited, issues that require new skills 
+We determined the story points based on a few metrics, including projected difficulty, time commitment, logical progression, and, of course, dependencies' interaction. 
+We assumed the person with the skills most suitable for each issue would be assigned to it. Since our prior experience is limited, issues that require new skills 
 (SQL for Supabase, HTML/CSS/React/ect.)
 <br>
 
-We selected priority around the basic functionality and 
-utility of the software; core functionality is prioritized, and by virtue of complexity tends to also have 
-higher story points. Saving lower story-point issues for later/last allows us to continuously troubleshoot
-and bug fix previous code and developments.
+We selected priority around the basic functionality and utility of the software; core functionality is prioritized, and by virtue of complexity tends to also have
+higher story points. Saving lower story-point issues for later/last allows us to continuously troubleshoot and bug fix previous code and developments.
 
+[//]: # (@author @han_ns / Hans Martin)
