@@ -37,5 +37,15 @@ A folder with testing builds.
    Polymorphism to allow future additions and uses to integrate fully with existing systems. 
    Flexibility of inventory types and allowances to allow for good handling of unexpected scenarios and inputs while maintaining functionality.*
 
+## Coding Conventions
+#### For sake of clarity and readability between different languages and experiences, we are using common coding styles and conventions as follows;
+[CSS:](https://developer.mozilla.org/en-US/docs/Web/CSS) <br/>
+[JavaScript/TypeScript:](https://google.github.io/styleguide/tsguide.html) <br/>
+[React:](https://react.dev/reference/rules) <br/>
+[HTML:](https://www.w3schools.com/html/html5_syntax.asp) <br/>
+
+[SQL:](https://www.sqlstyle.guide/) for SQL we are using Supabase, which provides a nice SDK for us. We'll stick with JS style where appropriate. <br/>
+
+
    
 
