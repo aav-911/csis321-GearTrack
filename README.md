@@ -13,6 +13,11 @@ GearTrack will improve the quality and efficiency of the MPS setup and troublesh
 
 This software will be a website, so it will include HTML, CSS, JavaScript, and React. The software will also need a manageable inventory system, so we will need Supabase and SQL. Because the software needs to be protected, we will need security skills/knowledge. This is a big project, especially when it comes to developing a protected website that uses cameras that scan QR codes and transfers the data to an organized inventory system. So the biggest challenge here would be time management, as we will need to learn some of the mentioned skills and apply them to the project, which will take a lot of time. 
 
+### ER Model for project: 
+![Image of sick, 100% grade-worthy project](sprints/sprint-3/Screenshot%202026-10-13%20153349.png)
+### Architecture Model for project:
+![Please tell me this loaded](sprints/sprint-3/Screenshot%202026-10-13%20153321.png)
+
 ## Repository Organization
 The repository will be organized in three folders:
 
