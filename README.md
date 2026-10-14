@@ -50,6 +50,7 @@ A folder with testing builds.
 [HTML:](https://www.w3schools.com/html/html5_syntax.asp) <br/>
 
 [SQL:](https://www.sqlstyle.guide/) for SQL we are using Supabase, which provides a nice SDK for us. We'll stick with JS style where appropriate. <br/>
+[Supabase](https://supabase.com/docs/guides/database/tables): Speaking of Supabase, we have to have everything named nicely there too.  
 
 
    
