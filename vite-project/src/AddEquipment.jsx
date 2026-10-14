@@ -41,8 +41,8 @@ function FormField()
 
         <button onClick = {() => setTableIsOpen(!tableIsOpened)}>
                                                     {/*Sets new button to opposite of whatever when clicked*/}
-            {selectedOption ? `Selected: ${selectedOption.location}` : ' Select A Location: ⠀'}
-                                                    {/*Uses a blank unicode char (Korean) for whitespace
+            {selectedOption ? `Selected: ${selectedOption.location}` : ' Select A Location: '}
+                                                    {/*Use a blank unicode char (Korean) for whitespace
                                                     //TODO fix this, doesn't work with arrows so this is
                                                     probably a temporary fix*/}
             <span style = {{ float: 'right' }}>{tableIsOpened ? '↑' : '↓'}</span>
