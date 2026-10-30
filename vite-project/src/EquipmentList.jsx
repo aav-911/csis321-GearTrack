@@ -28,8 +28,10 @@ export default function EquipmentList() {
   return (
     <ul>
       {items.map((item) => (
-        <li key={item.id}>
-          {item.name} - {item.location}
+        <li key={item.QR_Code}>
+          {item.Grouping} - {item.Equipment} - {item.Make} - {item.Model} -
+          {item.Location} - {item.Count} - {item.Status} - {item.Notes} -
+          {item.Owner} - {item.Serial_Number}
         </li>
       ))}
     </ul>
