@@ -1,10 +1,10 @@
 | Story ID     | Header 2      | Priority | Story Points | Dependencies |
 | :-----------:| :------------ | :------: | :----------: | :-----------: |
-| GT01 | As an MPS Supervisor, I need to be able to see and organize our equipment inventory so that I can prepare for an upcoming event. | Highest | 8 | None |
-| GT02  |As an MPS Student Worker, I need to be able to submit entries of equipment data and its location so that my supervisor can see where the equipment is stored.| High | 5 | GT01 |
-| GT03 | As an MPS Supervisor, I need to be able to find the relevant equipment’s location so that I can prepare for upcoming events. | High | 5 | GT01 |
-| GT04 | As an MPS Supervisor, I need to be able to see which equipment needs troubleshooting so that I can fix the equipment before the event it’s needed at. | Medium | 3 | GT01 |
-| GT05 | As an MPS Student Worker, I need to submit a report in case certain equipment stops working so that my supervisor can see what needs to be fixed. | Medium | 3 | GT01, GT02 |
+| US01 | As an MPS Supervisor, I need to be able to see and organize our equipment inventory so that I can prepare for an upcoming event. | Highest | 8 | None |
+| US02  |As an MPS Student Worker, I need to be able to submit entries of equipment data and its location so that my supervisor can see where the equipment is stored.| High | 5 | US01 |
+| US03 | As an MPS Supervisor, I need to be able to find the relevant equipment’s location so that I can prepare for upcoming events. | High | 5 | GT01 |
+| US04 | As an MPS Supervisor, I need to be able to see which equipment needs troubleshooting so that I can fix the equipment before the event it’s needed at. | Medium | 3 | GT01 |
+| US05 | As an MPS Student Worker, I need to submit a report in case certain equipment stops working so that my supervisor can see what needs to be fixed. | Medium | 3 | GT01, GT02 |
 
 ### Breakdown
 We determined the story points based on a few metrics, including projected difficulty, time commitment, logical progression, and, of course, dependencies' interaction. 
