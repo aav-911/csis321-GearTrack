@@ -1,0 +1,137 @@
+:root {
+  --primary: #0b2d5b;
+  --secondary: #2d3b63;
+  --accent: #4f6b8a;
+  --secondary_accent: #d4af37;
+  --background_color: #f7f6ee;
+  --surface: #fbf9f7;
+  --secondary_surface: #c3c4c2;
+  --text: #1e2a3a;
+
+  /* Typography */
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+body {
+  background-color: var(--background_color);
+  color: var(--secondary);
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+h1 {
+  color: var(--primary);
+  font-family: var(--font-heading);
+}
+
+.scroll-container {
+  position: relative;
+}
+.page-content {
+  padding-top: 72px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--secondary_accent);
+}
+
+/* NAVIGATION BAR */
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 40px;
+  background-color: var(--primary);
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--secondary_accent);
+  font-family: "Abril Fatface";
+}
+
+.nav-links {
+  display: flex;
+}
+
+.nav-links a {
+  color: var(--secondary_accent);
+  margin-left: 20px;
+  font-family: var(--font-mono);
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.hamburger-menu {
+  display: none;
+  font-size: 32px;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: var(--secondary_accent);
+}
+
+@media (max-width: 785px) {
+  nav {
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: var(--primary);
+    padding: 20px;
+    border-radius: 10px;
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: 0.3s ease;
+    z-index: 1001;
+  }
+
+  .nav-links.active {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .nav-links a {
+    margin: 10px 0;
+  }
+
+  h1 {
+    font-size: 64px;
+    line-height: 0.95;
+  }
+
+  p {
+    font-size: 22px;
+    max-width: 100%;
+    line-height: 1.5;
+  }
+}

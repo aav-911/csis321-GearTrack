@@ -26,14 +26,36 @@ export default function EquipmentList() {
   if (items.length === 0) return <p>No equipment found.</p>;
 
   return (
-    <ul>
-      {items.map((item) => (
-        <li key={item.QR_Code}>
-          {item.Grouping} - {item.Equipment} - {item.Make} - {item.Model} -
-          {item.Location} - {item.Count} - {item.Status} - {item.Notes} -
-          {item.Owner} - {item.Serial_Number}
-        </li>
-      ))}
-    </ul>
+    <section className="equipment-panel">
+      <h1>Equipment Inventory</h1>
+
+      <div className="equipment-table-scroll">
+        <table className="equipment-table">
+          <thead>
+            <tr>
+              <th scope="col">Equipment</th>
+              <th scope="col">Grouping</th>
+              <th scope="col">Make / Model</th>
+              <th scope="col">Location</th>
+              <th scope="col">Count</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td>{item.Equipment}</td>
+                <td>{item.Grouping}</td>
+                <td>{[item.Make, item.Model].filter(Boolean).join(" ")}</td>
+                <td>{item.Location}</td>
+                <td>{item.Count}</td>
+                <td>{item.Status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }

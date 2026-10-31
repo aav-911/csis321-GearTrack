@@ -4,10 +4,38 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vite-project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>GearTrack</title>
   </head>
   <body>
-    <div id="app"></div>
+    <nav aria-label="Primary Navigation">
+      <div class="logo"><a href="index.html">GearTrack</a></div>
+      <button
+        class="hamburger-menu"
+        id="hamburger-menu"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-controls="nav-links"
+      >
+        ☰
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="homepage.html">Home</a>
+        <a href="index.html">Database</a>
+        <a href="index.html">Log Out</a>
+      </div>
+    </nav>
+    <div class="page-content">
+      <div class="scroll-container">
+        <div id="app"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
