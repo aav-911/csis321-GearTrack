@@ -1,77 +1,189 @@
-import React, {useState} from 'react';
-
+import React, {useState, useEffect} from 'react';
+import { supabase } from './supabaseClient.js';
 
 function FormField()
 {
-// TODO set up supabase url and anon key, import from supabase, and update supabase once full form filled out.
-// need rest of eqipment options (maybe add from existing names / new item?) as well as add item. Confirm and double
-//check.
     const [tableIsOpened, setTableIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
-//                                                 opens selects option and closes table immediately; no click-away.
-//                                                 optionSelected is const var name
-//                                                 option is which row in the dropdown was clicked, aka the arg*/}
+    // empty array initialization
+    const [dropdownOptions, setDropdownOptions] = useState([]);
 
-    const dropdownOptions = [
-            {location: 'MPS Office'                            },
-            {location: 'EHS 102'                               },
-            {location: 'STV Closet'                            },
-            {location: 'CCD Closet'                            },
-            {location: 'Athletics Softball Kit'                },
-            {location: 'Athletics Baseball Kit'                },
-            {location: 'Athletics Office'                      },
-            {location: 'Athletics'                             },
-            {location: 'Sony Cam Case 3'                       },
-            {location: 'Sony Cam Case 4'                       },
-            {location: 'Stadium Grandstands Pole (North end)'  },
-            {location: 'Stadium Grandstands Pole (South end)'  },
-            {location: 'WSC 206 AV Rack' }
-        ];
+    // react variable states, initialized with empty strings.
+    const [equipmentName, setEquipmentName] = useState('');
+    const [make, setMake] = useState('');
+    const [model, setModel] = useState('');
+
+    // useEffect is background processes / brains that don't run dependant on / with the rendering
+    useEffect(() => {
+
+        // asynchronous so jsx doesnt wait for supabase
+        async function loadLocationsFromSupabase() {
+            const { data, error } = await supabase
+                .from('Equipment')
+                .select('Location');
+
+            if (error) {
+                console.log('Loading error:  ', error.message);
+            } else if (data) {
+
+                // only use one of each location. data.map only gets item locations, .filter removes null / empty
+                const uniqueLocations = [...new Set(data.map(item => item.Location))]
+                    .filter(loc => loc)
+                    .map(loc => ({ location: loc }))
+
+                    // sort alphabetically
+                    .sort((a, b) => a.location.localeCompare(b.location));
+
+                setDropdownOptions(uniqueLocations);
+            }
+        }
+        loadLocationsFromSupabase();
+    }, []);
 
     const optionSelected = option => {
         setSelectedOption(option);
         setTableIsOpen(false);
+    }
+
+    // button for confirm / push
+    const handleConfirm = async () => {
+        // check for all fields !empty
+        if (!equipmentName || !make || !model || !selectedOption) {
+            alert('Missing one or more field');
+            return;
         }
+
+        // add equipment else
+        const { error } = await supabase
+            .from('Equipment')
+            .insert([
+                {
+                    Equipment: equipmentName,
+                    Make: make,
+                    Model: model,
+                    Location: selectedOption.location,
+                    Status: 'Functional'
+                }
+            ]);
+
+            // handle adding error
+        if (error) {
+            alert('Error adding item: ' + error.message);
+        } else {
+            alert('Equipment successfully added to Supabase!');
+
+            // reset for new add after add works
+            setEquipmentName('');
+            setMake('');
+            setModel('');
+            setSelectedOption(null);
+        }
+    };
+
     return(
 
-//  Background element, farthest back layer
+    //bg
     <div style = {{padding : '20px',
                   backgroundColor : '#ABC',
                   borderRadius : '8px'}}>
-{/*  Box around the dropdown, medium layer  */}
-    <div style = {{padding : '20px',
-                  backgroundColor : '#FFFFEB'}}>
+        {/*  box around the text boxes and dropdowns */}
+        <div style = {{padding : '20px',
+                      backgroundColor : '#FFFFEB',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                      gap: '15px',
+                      alignItems: 'start'}}>
 
-{/*      Dropdown button for MPS location selection */}
-        <button onClick = {() => setTableIsOpen(!tableIsOpened)}>
-                                                    {/*Sets new button to opposite of whatever it was when clicked*/}
-            {selectedOption ? `Selected: ${selectedOption.location}` : ' Select A Location: '}
-                                                    {/*Use a blank unicode char (Korean) for whitespace
-                                                    //TODO fix this, doesn't work with arrows so this is
-                                                    probably a temporary fix*/}
-            <span style = {{ float: 'right' }}>{tableIsOpened ? '↑' : '↓'}</span>
-        </button>
+            {/* Equipment name */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Equipment Name"
+                    value={equipmentName}
+                    onChange={(e) => setEquipmentName(e.target.value)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+            </div>
 
-        {tableIsOpened && (
-            <ul style = {{ maxWidth: '250px',
-                           listStyle: 'none',
-                           overflow: 'hidden',
-                           textOverflow: 'ellipsis',
-                           padding: 0, marginTop: '10px',
-                           backgroundColor: '#FFFDD6'}}>
-                {dropdownOptions.map((opt, index) => (
-                    <li
-                        key = {index}
-                        onClick = {() => optionSelected(opt)}
-                        style = {{padding : '8px',
-                                  cursor: 'pointer',
-                                  borderBottom: '2px solid #ddd'}}
-                    >
-                        {opt.location}
-                    </li>
-                    ))}
-                </ul>
-                )}
+            {/* make name */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Make"
+                    value={make}
+                    onChange={(e) => setMake(e.target.value)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+            </div>
+
+            {/* model name */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Model"
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+            </div>
+
+            {/* location dropdown */}
+            {/* pos relative centres the dropdown under the box */}
+            <div style={{position: 'relative'}}>
+                <button
+
+                    // toggles state of table open,
+                    onClick = {() => setTableIsOpen(!tableIsOpened)}
+                    style={{width: '100%', padding: '6px', textAlign: 'left'}}
+                >
+                    {/* toggles between ^ and v depending on state */}
+                    {selectedOption ? `Selected: ${selectedOption.location}` : ' Select A Location: '}
+                    <span style = {{ float: 'right' }}>{tableIsOpened ? 'v  ' : '^  '}</span>
+                </button>
+
+                {/* only rendert when true */}
+                {tableIsOpened && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFDD6',
+                                   border: '1px solid #ccc',
+                                   // z index is to high layer, TODO change / make sure enoguh
+                                   zIndex: 10}}>
+                        {dropdownOptions.map((opt, index) => (
+
+                            // creating list item for each location in dropdownOptions
+                            <li
+                                key = {index}
+                                onClick = {() => optionSelected(opt)}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {opt.location}
+                            </li>
+                            ))}
+                        </ul>
+                        )}
+            </div>
+
+            {/*  Confirm button */}
+            <div>
+                <button
+                    onClick={handleConfirm}
+
+                    // stupid line wrapping
+                    style={{padding: '8px 15px',
+                            backgroundColor: '#4CAF50',
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                            width: '100%'}}
+                >
+                    Confirm & Save
+                </button>
+            </div>
+
           </div>
     </div>
     )
