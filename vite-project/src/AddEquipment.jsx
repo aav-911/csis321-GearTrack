@@ -138,7 +138,7 @@ function FormField()
                 >
                     {/* toggles between ^ and v depending on state */}
                     {selectedOption ? `Selected: ${selectedOption.location}` : ' Select A Location: '}
-                    <span style = {{ float: 'right' }}>{tableIsOpened ? 'v  ' : '^  '}</span>
+                    <span style = {{ float: 'right' }}>{tableIsOpened ?  '↑' : '↓'} </span>
                 </button>
 
                 {/* only rendert when true */}
