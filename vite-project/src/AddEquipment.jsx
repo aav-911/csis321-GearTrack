@@ -47,38 +47,36 @@ function FormField()
 
     // button for confirm / push
     const handleConfirm = async () => {
-        // check for all fields !empty
-        if (!equipmentName || !make || !model || !selectedOption) {
-            alert('Missing one or more field');
-            return;
-        }
+            if (!equipmentName || !make || !model || !selectedOption) {
+                alert('Missing one or more field');
+                return;
+            }
 
-        // add equipment else
-        const { error } = await supabase
-            .from('Equipment')
-            .insert([
-                {
-                    Equipment: equipmentName,
-                    Make: make,
-                    Model: model,
-                    Location: selectedOption.location,
-                    Status: 'Functional'
-                }
-            ]);
+            // console checking for status of supabase
+            const response = await supabase
+                .from('Equipment')
+                .insert([
+                    {
+                        Equipment: equipmentName,
+                        Make: make,
+                        Model: model,
+                        Location: selectedOption.location,
+                        Status: 'Functional'
+                    }
+                ]);
 
-            // handle adding error
-        if (error) {
-            alert('Error adding item: ' + error.message);
-        } else {
-            alert('Equipment successfully added to Supabase!');
+            console.log("Supabase Insert Response:", response);
 
-            // reset for new add after add works
-            setEquipmentName('');
-            setMake('');
-            setModel('');
-            setSelectedOption(null);
-        }
-    };
+            if (response.error) {
+                alert('Error adding item: ' + response.error.message);
+            } else {
+                alert('Equipment successfully added to Equipment Table');
+                setEquipmentName('');
+                setMake('');
+                setModel('');
+                setSelectedOption(null);
+            }
+        };
 
     return(
 
