@@ -3,80 +3,102 @@ import { supabase } from './supabaseClient.js';
 
 function FormField()
 {
-    const [tableIsOpened, setTableIsOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null);
-    // empty array initialization
-    const [dropdownOptions, setDropdownOptions] = useState([]);
-
-    // react variable states, initialized with empty strings.
+    // preloading / initializing each form field
     const [equipmentName, setEquipmentName] = useState('');
-    const [make, setMake] = useState('');
-    const [model, setModel] = useState('');
+    const [makeInput, setMakeInput] = useState('');
+    const [modelVal, setModelVal] = useState('');
+    const [locationInput, setLocationInput] = useState('');
+
+    // states for storing previous equipment options
+    const [equipmentList, setEquipmentList] = useState([]);
+    const [makeList, setMakeList] = useState([]);
+    const [modelList, setModelList] = useState([]);
+    const [locationList, setLocationList] = useState([]);
+
+    // states for toggleing menus / text boxes
+    const [equipmentOpen, setEquipmentOpen] = useState(false);
+    const [makeOpen, setMakeOpen] = useState(false);
+    const [modelOpen, setModelOpen] = useState(false);
+    const [locationOpen, setLocationOpen] = useState(false);
 
     // useEffect is background processes / brains that don't run dependant on / with the rendering
     useEffect(() => {
 
         // asynchronous so jsx doesnt wait for supabase
-        async function loadLocationsFromSupabase() {
-            const { data, error } = await supabase
-                .from('Equipment')
-                .select('Location');
+        async function fetchAllPastData() {
+            const { data, error } = await supabase.from('Equipment').select('Equipment, Make, Model, Location');
 
             if (error) {
                 console.log('Loading error:  ', error.message);
             } else if (data) {
 
-                // only use one of each location. data.map only gets item locations, .filter removes null / empty
-                const uniqueLocations = [...new Set(data.map(item => item.Location))]
-                    .filter(loc => loc)
-                    .map(loc => ({ location: loc }))
-
-                    // sort alphabetically
-                    .sort((a, b) => a.location.localeCompare(b.location));
-
-                setDropdownOptions(uniqueLocations);
+                // filter out doubles, remove empties, sort alphabetically.
+                setEquipmentList([...new Set(data.map(i => i.Equipment))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
+                setMakeList([...new Set(data.map(i => i.Make))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
+                setModelList([...new Set(data.map(i => i.Model))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
+                setLocationList([...new Set(data.map(i => i.Location))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
             }
         }
-        loadLocationsFromSupabase();
+        fetchAllPastData();
     }, []);
 
-    const optionSelected = option => {
-        setSelectedOption(option);
-        setTableIsOpen(false);
-    }
+    // filter
+    const filteredEquipment = equipmentList.filter(item =>
+        item.toLowerCase().includes(equipmentName.toLowerCase())
+    );
+
+    // filter
+    const filteredMakes = makeList.filter(item =>
+        item.toLowerCase().includes(makeInput.toLowerCase())
+    );
+
+    // filter
+    const filteredModels = modelList.filter(item =>
+        item.toLowerCase().includes(modelVal.toLowerCase())
+    );
+
+    // filter. copy / pasted, so TODO check for errors
+    const filteredLocations = locationList.filter(item =>
+        item.toLowerCase().includes(locationInput.toLowerCase())
+    );
 
     // button for confirm / push
     const handleConfirm = async () => {
-            if (!equipmentName || !make || !model || !selectedOption) {
-                alert('Missing one or more field');
-                return;
-            }
+        // check for all fields !empty
+        if (!equipmentName || !makeInput || !modelVal || !locationInput) {
+            alert('Missing one or more field');
+            return;
+        }
+
+        // add equipment else
+        const response = await supabase
+            .from('Equipment')
+            .insert([
+                {
+                    Equipment: equipmentName,
+                    Make: makeInput,
+                    Model: modelVal,
+                    Location: locationInput,
+                    Status: 'Functional'
+                }
+            ]);
 
             // console checking for status of supabase
-            const response = await supabase
-                .from('Equipment')
-                .insert([
-                    {
-                        Equipment: equipmentName,
-                        Make: make,
-                        Model: model,
-                        Location: selectedOption.location,
-                        Status: 'Functional'
-                    }
-                ]);
-
             console.log("Supabase Insert Response:", response);
 
-            if (response.error) {
-                alert('Error adding item: ' + response.error.message);
-            } else {
-                alert('Equipment successfully added to Equipment Table');
-                setEquipmentName('');
-                setMake('');
-                setModel('');
-                setSelectedOption(null);
-            }
-        };
+            // handle adding error
+        if (response.error) {
+            alert('Error adding item: ' + response.error.message);
+        } else {
+            alert('Equipment successfully added to Supabase!');
+
+            // reset for new add after add works
+            setEquipmentName('');
+            setMakeInput('');
+            setModelVal('');
+            setLocationInput('');
+        }
+    };
 
     return(
 
@@ -93,76 +115,180 @@ function FormField()
                       alignItems: 'start'}}>
 
             {/* Equipment name */}
-            <div>
+            {/* pos relative centres the dropdown under the box */}
+            {/* TODO change box colour to match box bg colour of off-white / yellow?  */}
+            <div style={{position: 'relative'}}>
                 <input
                     type="text"
                     placeholder="Equipment Name"
                     value={equipmentName}
-                    onChange={(e) => setEquipmentName(e.target.value)}
+                    onChange={(e) => {
+                        setEquipmentName(e.target.value);
+                        setEquipmentOpen(true);
+                    }}
+                    onFocus={() => setEquipmentOpen(true)}
                     style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
                 />
+
+                {/* only rendert when true */}
+                {equipmentOpen && filteredEquipment.length > 0 && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFFFF',
+                                   border: '1px solid #ccc',
+                                   zIndex: 10}}>
+                        {filteredEquipment.map((item, index) => (
+
+                            // creating list item for each location in dropdownOptions
+                            <li
+                                key = {index}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setEquipmentName(item);
+                                    setEquipmentOpen(false);
+                                }}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             {/* make name */}
-            <div>
+            {/* pos relative centres the dropdown under the box */}
+            <div style={{position: 'relative'}}>
                 <input
                     type="text"
                     placeholder="Make"
-                    value={make}
-                    onChange={(e) => setMake(e.target.value)}
+                    value={makeInput}
+                    onChange={(e) => {
+                        setMakeInput(e.target.value);
+                        setMakeOpen(true);
+                    }}
+                    onFocus={() => setMakeOpen(true)}
                     style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
                 />
-            </div>
-
-            {/* model name */}
-            <div>
-                <input
-                    type="text"
-                    placeholder="Model"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
-                />
-            </div>
-
-            {/* location dropdown */}
-            {/* pos relative centres the dropdown under the box */}
-            <div style={{position: 'relative'}}>
-                <button
-
-                    // toggles state of table open,
-                    onClick = {() => setTableIsOpen(!tableIsOpened)}
-                    style={{width: '100%', padding: '6px', textAlign: 'left'}}
-                >
-                    {/* toggles between ^ and v depending on state */}
-                    {selectedOption ? `Selected: ${selectedOption.location}` : ' Select A Location: '}
-                    <span style = {{ float: 'right' }}>{tableIsOpened ?  '↑' : '↓'} </span>
-                </button>
 
                 {/* only rendert when true */}
-                {tableIsOpened && (
+                {makeOpen && filteredMakes.length > 0 && (
                     <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
                                    listStyle: 'none',
                                    padding: 0, marginTop: '4px',
                                    backgroundColor: '#FFFDD6',
                                    border: '1px solid #ccc',
-                                   // z index is to high layer, TODO change / make sure enoguh
                                    zIndex: 10}}>
-                        {dropdownOptions.map((opt, index) => (
+                        {filteredMakes.map((item, index) => (
 
                             // creating list item for each location in dropdownOptions
                             <li
                                 key = {index}
-                                onClick = {() => optionSelected(opt)}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setMakeInput(item);
+                                    setMakeOpen(false);
+                                }}
                                 style = {{padding : '8px',
                                           cursor: 'pointer',
                                           borderBottom: '1px solid #ddd'}}
                             >
-                                {opt.location}
+                                {item}
                             </li>
-                            ))}
-                        </ul>
-                        )}
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* model name */}
+            {/* pos relative centres the dropdown under the box */}
+            <div style={{position: 'relative'}}>
+                <input
+                    type="text"
+                    placeholder="Model"
+                    value={modelVal}
+                    onChange={(e) => {
+                        setModelVal(e.target.value);
+                        setModelOpen(true);
+                    }}
+                    onFocus={() => setModelOpen(true)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+
+                {/* only rendert when true */}
+                {modelOpen && filteredModels.length > 0 && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFFFF',
+                                   border: '1px solid #ccc',
+                                   zIndex: 10}}>
+                        {filteredModels.map((item, index) => (
+
+                            // creating list item for each location in dropdownOptions
+                            <li
+                                key = {index}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setModelVal(item);
+                                    setModelOpen(false);
+                                }}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* location dropdown */}
+            {/* pos relative centres the dropdown under the box */}
+            <div style={{position: 'relative'}}>
+                <input
+                    type="text"
+                    placeholder="Location"
+                    value={locationInput}
+                    onChange={(e) => {
+                        setLocationInput(e.target.value);
+                        setLocationOpen(true);
+                    }}
+                    onFocus={() => setLocationOpen(true)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+
+                {/* only rendert when true */}
+                {locationOpen && filteredLocations.length > 0 && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFFFF',
+                                   border: '1px solid #ccc',
+                                   zIndex: 10}}>
+                        {filteredLocations.map((item, index) => (
+
+                            // creating list item for each location in dropdownOptions
+                            <li
+                                key = {index}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setLocationInput(item);
+                                    setLocationOpen(false);
+                                }}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             {/*  Confirm button */}
