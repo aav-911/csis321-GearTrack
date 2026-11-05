@@ -29,7 +29,7 @@ export default function EquipmentList() {
     <ul>
       {items.map((item) => (
         <li key={item["QR Code"]}>
-          {item.Equipment} - {item.location}
+          {item.Equipment} - {item.Location}
         </li>
       ))}
     </ul>
