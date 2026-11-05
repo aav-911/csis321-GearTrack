@@ -6,13 +6,8 @@ import "./style.css";                             //[cite: 4]
 createRoot(document.getElementById("app")).render(
   <div style={{ padding: "20px" }}>
     <h1>GearTrack Dashboard</h1>
-
-    {/* Render your Add/Select form component */}
     <FormField />
-
     <hr style={{ margin: "30px 0" }} />
-
-    {/* Render your existing equipment list component */}
     <EquipmentList />
   </div>
 );
