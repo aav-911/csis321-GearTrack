@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient.js";
 
+function formatMakeModel(item) {
+  const parts = [item.Make, item.Model].filter((value) => {
+    if (typeof value !== "string") return false;
+
+    const cleaned = value.trim();
+    return cleaned !== "" && !["n/a", "na"].includes(cleaned.toLowerCase());
+  });
+
+  return parts.length > 0 ? ` (${parts.join(" - ")})` : "";
+}
+
 export default function EquipmentList() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,24 +44,27 @@ export default function EquipmentList() {
         <table className="equipment-table">
           <thead>
             <tr>
-              <th scope="col">Equipment</th>
               <th scope="col">Grouping</th>
-              <th scope="col">Make / Model</th>
+              <th scope="col">Equipment</th>
               <th scope="col">Location</th>
               <th scope="col">Count</th>
               <th scope="col">Status</th>
+              <th scope="col">Notes</th>
             </tr>
           </thead>
 
           <tbody>
             {items.map((item) => (
               <tr key={item.id}>
-                <td>{item.Equipment}</td>
                 <td>{item.Grouping}</td>
-                <td>{[item.Make, item.Model].filter(Boolean).join(" ")}</td>
+                <td>
+                  {item.Equipment}
+                  {formatMakeModel(item)}
+                </td>
                 <td>{item.Location}</td>
                 <td>{item.Count}</td>
                 <td>{item.Status}</td>
+                <td>{item.Notes}</td>
               </tr>
             ))}
           </tbody>
