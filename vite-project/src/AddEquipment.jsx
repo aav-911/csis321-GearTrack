@@ -8,25 +8,40 @@ function FormField()
     const [makeInput, setMakeInput] = useState('');
     const [modelVal, setModelVal] = useState('');
     const [locationInput, setLocationInput] = useState('');
+    const [groupingInput, setGroupingInput] = useState('');
+    const [idTagInput, setIdTagInput] = useState('');
+    const [countInput, setCountInput] = useState('1');
+    const [ownerInput, setOwnerInput] = useState('');
+    const [serialNumInput, setSerialNumInput] = useState('');
+    const [statusInput, setStatusInput] = useState('Functional');
+    const [notesInput, setNotesInput] = useState('');
 
     // states for storing previous equipment options
     const [equipmentList, setEquipmentList] = useState([]);
     const [makeList, setMakeList] = useState([]);
     const [modelList, setModelList] = useState([]);
     const [locationList, setLocationList] = useState([]);
+    const [groupingList, setGroupingList] = useState([]);
+    const [ownerList, setOwnerList] = useState([]);
+    const [statusList, setStatusList] = useState([]);
 
     // states for toggleing menus / text boxes
     const [equipmentOpen, setEquipmentOpen] = useState(false);
     const [makeOpen, setMakeOpen] = useState(false);
     const [modelOpen, setModelOpen] = useState(false);
     const [locationOpen, setLocationOpen] = useState(false);
+    const [groupingOpen, setGroupingOpen] = useState(false);
+    const [ownerOpen, setOwnerOpen] = useState(false);
+    const [statusOpen, setStatusOpen] = useState(false);
 
     // useEffect is background processes / brains that don't run dependant on / with the rendering
     useEffect(() => {
 
         // asynchronous so jsx doesnt wait for supabase
         async function fetchAllPastData() {
-            const { data, error } = await supabase.from('Equipment').select('Equipment, Make, Model, Location');
+            const { data, error } = await supabase
+                .from('Equipment')
+                .select('Equipment, Make, Model, Location, Grouping, Owner, Status');
 
             if (error) {
                 console.log('Loading error:  ', error.message);
@@ -37,6 +52,9 @@ function FormField()
                 setMakeList([...new Set(data.map(i => i.Make))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
                 setModelList([...new Set(data.map(i => i.Model))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
                 setLocationList([...new Set(data.map(i => i.Location))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
+                setGroupingList([...new Set(data.map(i => i.Grouping))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
+                setOwnerList([...new Set(data.map(i => i.Owner))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
+                setStatusList([...new Set(data.map(i => i.Status))].filter(Boolean).sort((a,b) => a.localeCompare(b)));
             }
         }
         fetchAllPastData();
@@ -62,13 +80,37 @@ function FormField()
         item.toLowerCase().includes(locationInput.toLowerCase())
     );
 
+    // filter. copy / pasted, so TODO check for errors
+    const filteredGroupings = groupingList.filter(item =>
+        item.toLowerCase().includes(groupingInput.toLowerCase())
+    );
+
+    // filter. copy / pasted, so TODO check for errors
+    const filteredOwners = ownerList.filter(item =>
+        item.toLowerCase().includes(ownerInput.toLowerCase())
+    );
+
+    // filter. copy / pasted, so TODO check for errors
+    const filteredStatuses = statusList.filter(item =>
+        item.toLowerCase().includes(statusInput.toLowerCase())
+    );
+
     // button for confirm / push
     const handleConfirm = async () => {
         // check for all fields !empty
-        if (!equipmentName || !makeInput || !modelVal || !locationInput) {
+        if (!equipmentName || !makeInput || !modelVal || !locationInput || !groupingInput || !idTagInput || !ownerInput) {
             alert('Missing one or more field');
             return;
         }
+
+        // close all dropdowns when form submitted
+        setEquipmentOpen(false);
+        setMakeOpen(false);
+        setModelOpen(false);
+        setLocationOpen(false);
+        setGroupingOpen(false);
+        setOwnerOpen(false);
+        setStatusOpen(false);
 
         // add equipment else
         const response = await supabase
@@ -79,7 +121,13 @@ function FormField()
                     Make: makeInput,
                     Model: modelVal,
                     Location: locationInput,
-                    Status: 'Functional'
+                    Grouping: groupingInput,
+                    "ID Tag": idTagInput,
+                    Count: parseInt(countInput, 10) || 1,
+                    Owner: ownerInput,
+                    "Serial Number": serialNumInput,
+                    Status: statusInput,
+                    Notes: notesInput
                 }
             ]);
 
@@ -97,6 +145,13 @@ function FormField()
             setMakeInput('');
             setModelVal('');
             setLocationInput('');
+            setGroupingInput('');
+            setIdTagInput('');
+            setCountInput('1');
+            setOwnerInput('');
+            setSerialNumInput('');
+            setStatusInput('Functional');
+            setNotesInput('');
         }
     };
 
@@ -117,7 +172,11 @@ function FormField()
             {/* Equipment name */}
             {/* pos relative centres the dropdown under the box */}
             {/* TODO change box colour to match box bg colour of off-white / yellow?  */}
-            <div style={{position: 'relative'}}>
+            {/* onBlur checks focus, closes dropdowns if true, ie curser outside of textbox */}
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setEquipmentOpen(false); }}
+            >
                 <input
                     type="text"
                     placeholder="Equipment Name"
@@ -161,7 +220,10 @@ function FormField()
 
             {/* make name */}
             {/* pos relative centres the dropdown under the box */}
-            <div style={{position: 'relative'}}>
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setMakeOpen(false); }}
+            >
                 <input
                     type="text"
                     placeholder="Make"
@@ -179,7 +241,7 @@ function FormField()
                     <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
                                    listStyle: 'none',
                                    padding: 0, marginTop: '4px',
-                                   backgroundColor: '#FFFDD6',
+                                   backgroundColor: '#FFFFFF',
                                    border: '1px solid #ccc',
                                    zIndex: 10}}>
                         {filteredMakes.map((item, index) => (
@@ -205,7 +267,10 @@ function FormField()
 
             {/* model name */}
             {/* pos relative centres the dropdown under the box */}
-            <div style={{position: 'relative'}}>
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setModelOpen(false); }}
+            >
                 <input
                     type="text"
                     placeholder="Model"
@@ -249,7 +314,10 @@ function FormField()
 
             {/* location dropdown */}
             {/* pos relative centres the dropdown under the box */}
-            <div style={{position: 'relative'}}>
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setLocationOpen(false); }}
+            >
                 <input
                     type="text"
                     placeholder="Location"
@@ -291,8 +359,189 @@ function FormField()
                 )}
             </div>
 
-            {/*  Confirm button */}
+            {/* Grouping */}
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setGroupingOpen(false); }}
+            >
+                <input
+                    type="text"
+                    placeholder="Grouping"
+                    value={groupingInput}
+                    onChange={(e) => {
+                        setGroupingInput(e.target.value);
+                        setGroupingOpen(true);
+                    }}
+                    onFocus={() => setGroupingOpen(true)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+
+                {/* only rendert when true */}
+                {groupingOpen && filteredGroupings.length > 0 && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFFFF',
+                                   border: '1px solid #ccc',
+                                   zIndex: 10}}>
+                        {filteredGroupings.map((item, index) => (
+                            <li
+                                key = {index}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setGroupingInput(item);
+                                    setGroupingOpen(false);
+                                }}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* ID Tag */}
             <div>
+                <input
+                    type="text"
+                    placeholder="ID Tag"
+                    value={idTagInput}
+                    onChange={(e) => setIdTagInput(e.target.value)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+            </div>
+
+            {/* Count */}
+            <div>
+                <input
+                    type="number"
+                    min="1"
+                    placeholder="Count"
+                    value={countInput}
+                    onChange={(e) => setCountInput(e.target.value)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+            </div>
+
+            {/* Owner */}
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOwnerOpen(false); }}
+            >
+                <input
+                    type="text"
+                    placeholder="Owner"
+                    value={ownerInput}
+                    onChange={(e) => {
+                        setOwnerInput(e.target.value);
+                        setOwnerOpen(true);
+                    }}
+                    onFocus={() => setOwnerOpen(true)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+
+                {/* only rendert when true */}
+                {ownerOpen && filteredOwners.length > 0 && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFFFF',
+                                   border: '1px solid #ccc',
+                                   zIndex: 10}}>
+                        {filteredOwners.map((item, index) => (
+                            <li
+                                key = {index}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setOwnerInput(item);
+                                    setOwnerOpen(false);
+                                }}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* Serial Number */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Serial Number"
+                    value={serialNumInput}
+                    onChange={(e) => setSerialNumInput(e.target.value)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+            </div>
+
+            {/* Status */}
+            <div
+                style={{position: 'relative'}}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setStatusOpen(false); }}
+            >
+                <input
+                    type="text"
+                    placeholder="Status"
+                    value={statusInput}
+                    onChange={(e) => {
+                        setStatusInput(e.target.value);
+                        setStatusOpen(true);
+                    }}
+                    onFocus={() => setStatusOpen(true)}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box'}}
+                />
+
+                {/* only rendert when true */}
+                {statusOpen && filteredStatuses.length > 0 && (
+                    <ul style = {{ position: 'absolute', width: '100%', maxHeight: '150px', overflowY: 'auto',
+                                   listStyle: 'none',
+                                   padding: 0, marginTop: '4px',
+                                   backgroundColor: '#FFFFFF',
+                                   border: '1px solid #ccc',
+                                   zIndex: 10}}>
+                        {filteredStatuses.map((item, index) => (
+                            <li
+                                key = {index}
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick = {() => {
+                                    setStatusInput(item);
+                                    setStatusOpen(false);
+                                }}
+                                style = {{padding : '8px',
+                                          cursor: 'pointer',
+                                          borderBottom: '1px solid #ddd'}}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* Notes */}
+            <div style={{gridColumn: '1 / -1'}}>
+                <textarea
+                    placeholder="Notes (Max 250 characters)"
+                    value={notesInput}
+                    maxLength={250}
+                    onChange={(e) => setNotesInput(e.target.value)}
+                    rows={3}
+                    style={{padding: '6px', width: '100%', boxSizing: 'border-box', resize: 'vertical'}}
+                />
+                <div style={{fontSize: '12px', color: '#777', textAlign: 'right'}}>
+                    {notesInput.length}/250 chars
+                </div>
+            </div>
+
+            {/*  Confirm button */}
+            <div style={{gridColumn: '1 / -1'}}>
                 <button
                     onClick={handleConfirm}
 

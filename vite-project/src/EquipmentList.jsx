@@ -35,3 +35,6 @@ export default function EquipmentList() {
     </ul>
   );
 }
+
+// AI Declaration; this file will not be pushed to main, since it was used for only test purposes, but I did use Gogole
+// Gemini to troubleshoot rendering issues.
