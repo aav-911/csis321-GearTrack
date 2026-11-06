@@ -1,19 +1,17 @@
 .equipment-panel {
-  width: min(100% - 32px, 1000px);
-  margin: 32px auto;
+  width: min(100% - 32px, 1200px);
   text-align: left;
   color: var(--text);
 }
 
 .equipment-panel h1 {
   font-size: 2rem;
-  margin: 0 0 16px;
 }
 
 .equipment-table-scroll {
-  max-height: 360px;
+  max-height: 480px;
   overflow: auto;
-  border: 1px solid var(--primary);
+  border: 2px solid var(--text);
   border-radius: 10px;
 }
 
@@ -27,8 +25,12 @@
 .equipment-table th,
 .equipment-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--primary);
+  border-bottom: 2px solid var(--text);
   text-align: left;
+}
+
+.equipment-table td {
+  font-family: var(--font-mono);
 }
 
 .equipment-table th {
@@ -37,12 +39,34 @@
   background: var(--secondary_surface);
   color: var(--text);
   z-index: 1;
+  font-family: var(--font-heading);
 }
 
 .equipment-table tbody tr:nth-child(even) {
-  background: var(--surface);
+  background: var(--background_color);
 }
 
 .equipment-table tbody tr:hover {
   background: var(--secondary_surface);
+}
+
+@media (max-width: 785px) {
+  .equipment-table-scroll {
+    max-height: 480px;
+    overflow: auto;
+    border: 2px solid var(--text);
+    border-radius: 10px;
+  }
+
+  .equipment-table th,
+  .equipment-table td {
+    padding: 10px 1px 10px 1px;
+    border-bottom: 2px solid var(--text);
+    text-align: left;
+    font-size: 12px;
+  }
+  .equipment-table th,
+  .equipment-table td {
+    max-width: 5px;
+  }
 }
