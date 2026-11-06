@@ -52,6 +52,6 @@ A folder with testing builds.
 [SQL:](https://www.sqlstyle.guide/) for SQL we are using Supabase, which provides a nice SDK for us. We'll stick with JS style where appropriate. <br/>
 [Supabase](https://supabase.com/docs/guides/database/tables): Speaking of Supabase, we have to have everything named nicely there too.  
 
-
+## AI usage can be found on AI-USAGE.md
    
 
