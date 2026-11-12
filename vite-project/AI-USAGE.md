@@ -21,7 +21,7 @@ AI tools were used to assist with:
   with wrong fields. Most AI contributions were copied over "by hand" by the developer primarily responsible for
   AddEquipment, and were generated to adhere to the structure, naming convention, and other attributes of the human
   code. Repetitive tasks such as implementing multiple text input boxed were realized with AI assistance.
-- EquipmentList.jsx : Around 45% AI assisted, primarily used to integrate AddEquipment to the page. Since this 
+- EquipmentList.jsx : Around 55-60% AI assisted, primarily used to integrate AddEquipment to the page. Since this 
   section is a lot less behavioral nuanced, AI was used more than AddEquipment.jsx. AI was mainly used to for learning
   purposes and figuring out how to display the equipment
 - styles.css: Around 35-45% AI assisted, primarily used to learn how to style the website as well as come up with a suitable color palette and typography. 
